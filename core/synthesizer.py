@@ -2,8 +2,8 @@ import json
 import logging
 from typing import Dict, Any
 from langchain_community.llms import Ollama
-from reelcontext.config import settings
-from reelcontext.schemas.output import AnalysisResponse
+from content_analyzer.config import settings
+from content_analyzer.schemas.output import AnalysisResponse
 
 logger = logging.getLogger(__name__)
 

@@ -102,8 +102,8 @@ venv.bak
 cython_debug/
 
 # Temp files
-/tmp/reelcontext/
-reelcontext/tmp/
+/tmp/content_analyzer/
+content_analyzer/tmp/
 *.mp4
 *.wav
 *.jpg

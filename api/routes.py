@@ -3,14 +3,14 @@ import logging
 import asyncio
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from typing import Optional
-from reelcontext.core.input_handler import InputHandler
-from reelcontext.core.media_processor import MediaProcessor
-from reelcontext.core.transcriber import Transcriber
-from reelcontext.core.vision_router import VisionRouter
-from reelcontext.core.agent import VideoContextAgent
-from reelcontext.core.synthesizer import OutputSynthesizer
-from reelcontext.utils.file_manager import FileManager
-from reelcontext.schemas.output import AnalysisResponse
+from content_analyzer.core.input_handler import InputHandler
+from content_analyzer.core.media_processor import MediaProcessor
+from content_analyzer.core.transcriber import Transcriber
+from content_analyzer.core.vision_router import VisionRouter
+from content_analyzer.core.agent import VideoContextAgent
+from content_analyzer.core.synthesizer import OutputSynthesizer
+from content_analyzer.utils.file_manager import FileManager
+from content_analyzer.schemas.output import AnalysisResponse
 
 router = APIRouter()
 logger = logging.getLogger(__name__)

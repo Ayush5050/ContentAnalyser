@@ -2,7 +2,7 @@ import os
 import yt_dlp
 import logging
 from typing import Optional
-from reelcontext.utils.file_manager import FileManager
+from content_analyzer.utils.file_manager import FileManager
 
 logger = logging.getLogger(__name__)
 
@@ -13,7 +13,7 @@ class InputHandler:
         Downloads video from URL using yt-dlp.
         Supports YouTube, Instagram, TikTok, etc.
         """
-        output_template = os.path.join(download_dir, "reel.%(ext)s")
+        output_template = os.path.join(download_dir, "video.%(ext)s")
         
         ydl_opts = {
             'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
@@ -33,7 +33,7 @@ class InputHandler:
                 info = ydl.extract_info(url, download=True)
                 downloaded_file = ydl.prepare_filename(info)
                 
-                # Ensure it's named 'reel.mp4' as expected by other modules
+                # Ensure it's named 'video.mp4' as expected by other modules
                 final_path = FileManager.get_video_path(download_dir)
                 if downloaded_file != final_path and os.path.exists(downloaded_file):
                     os.rename(downloaded_file, final_path)

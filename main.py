@@ -1,8 +1,8 @@
 import logging
 import uvicorn
 from fastapi import FastAPI
-from reelcontext.api.routes import router
-from reelcontext.config import settings
+from content_analyzer.api.routes import router
+from content_analyzer.config import settings
 
 # Setup logging
 logging.basicConfig(
@@ -11,7 +11,7 @@ logging.basicConfig(
 )
 
 app = FastAPI(
-    title="ReelContext API",
+    title="ContentAnalyzer API",
     description="AI agent for identifying movie scenes and real-world events from short-form videos.",
     version="1.0.0"
 )
@@ -19,4 +19,4 @@ app = FastAPI(
 app.include_router(router)
 
 if __name__ == "__main__":
-    uvicorn.run("reelcontext.main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("content_analyzer.main:app", host="0.0.0.0", port=8000, reload=True)

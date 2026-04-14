@@ -5,8 +5,8 @@ import logging
 import pytesseract
 from typing import List, Tuple
 from PIL import Image
-from reelcontext.config import settings
-from reelcontext.utils.file_manager import FileManager
+from content_analyzer.config import settings
+from content_analyzer.utils.file_manager import FileManager
 
 logger = logging.getLogger(__name__)
 

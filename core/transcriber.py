@@ -1,7 +1,7 @@
 import whisper
 import logging
 from typing import Tuple
-from reelcontext.config import settings
+from content_analyzer.config import settings
 
 logger = logging.getLogger(__name__)
 

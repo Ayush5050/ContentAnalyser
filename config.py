@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     WHISPER_MODEL: str = "small"
     
     # Directories
-    BASE_TEMP_DIR: str = "/tmp/reelcontext"
+    BASE_TEMP_DIR: str = "/tmp/content_analyzer"
     
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

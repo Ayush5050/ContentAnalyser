@@ -4,8 +4,8 @@ from langchain_community.llms import Ollama
 from langchain.agents import AgentExecutor, create_react_agent
 from langchain.prompts import PromptTemplate
 from langchain.tools import Tool, tool
-from reelcontext.config import settings
-from reelcontext.tools.web_search import get_web_search_tool
+from content_analyzer.config import settings
+from content_analyzer.tools.web_search import get_web_search_tool
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +29,7 @@ class VideoContextAgent:
 
     def _get_prompt(self):
         template = """You are a video context expert. Given visual scene description, 
-audio transcript, and on-screen text from a short video reel, 
+audio transcript, and on-screen text from a short video video, 
 identify the source (movie, TV show, news event, sports event etc.), 
 explain what is happening, and provide full context. 
 

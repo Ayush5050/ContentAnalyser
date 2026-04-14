@@ -4,7 +4,7 @@ import os
 from typing import List
 from openai import OpenAI
 import google.generativeai as genai
-from reelcontext.config import settings
+from content_analyzer.config import settings
 
 logger = logging.getLogger(__name__)
 

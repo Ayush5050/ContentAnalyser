@@ -2,7 +2,7 @@ import os
 import shutil
 import uuid
 from typing import Generator
-from reelcontext.config import settings
+from content_analyzer.config import settings
 
 class FileManager:
     @staticmethod
@@ -21,7 +21,7 @@ class FileManager:
 
     @staticmethod
     def get_video_path(dir_path: str) -> str:
-        return os.path.join(dir_path, "reel.mp4")
+        return os.path.join(dir_path, "video.mp4")
 
     @staticmethod
     def get_audio_path(dir_path: str) -> str:

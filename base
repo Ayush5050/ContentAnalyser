@@ -1,5 +1,5 @@
-Build a production-level Python project called "ReelContext" — an AI agent 
-that takes a short-form video reel (Instagram/YouTube Shorts/TikTok) and 
+Build a production-level Python project called "ContentAnalyzer" — an AI agent 
+that takes a short-form video video (Instagram/YouTube Shorts/TikTok) and 
 identifies what movie scene or real-world event it is from, then explains 
 it to the user.
 
@@ -21,7 +21,7 @@ it to the user.
 
 === PROJECT STRUCTURE ===
 
-reelcontext/
+content_analyzer/
 ├── main.py                  # FastAPI app entry point
 ├── .env.example             # API keys template
 ├── requirements.txt
@@ -46,8 +46,8 @@ reelcontext/
 
 1. INPUT HANDLER (input_handler.py)
    - Accept either a URL string or an uploaded file path
-   - If URL: use yt-dlp to download to /tmp/reelcontext/{uuid}/reel.mp4
-   - Support: YouTube Shorts, Instagram Reels, TikTok, Twitter/X, Facebook
+   - If URL: use yt-dlp to download to /tmp/content_analyzer/{uuid}/video.mp4
+   - Support: YouTube Shorts, Instagram Videos, TikTok, Twitter/X, Facebook
    - For Instagram: use cookiesfrombrowser chrome as fallback
    - After processing always delete temp files (use try/finally)
 
@@ -82,7 +82,7 @@ reelcontext/
    - Agent decides autonomously when to trigger web search
    - Agent prompt system message:
      "You are a video context expert. Given visual scene description, 
-      audio transcript, and on-screen text from a short video reel, 
+      audio transcript, and on-screen text from a short video video, 
       identify the source (movie, TV show, news event, sports event etc.), 
       explain what is happening, and provide full context. 
       Use web search when you are not confident. 
