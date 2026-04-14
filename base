@@ -1,0 +1,132 @@
+Build a production-level Python project called "ReelContext" — an AI agent 
+that takes a short-form video reel (Instagram/YouTube Shorts/TikTok) and 
+identifies what movie scene or real-world event it is from, then explains 
+it to the user.
+
+=== TECH STACK ===
+
+- Python 3.11+
+- LangChain (agent orchestration)
+- yt-dlp (video downloading from links)
+- OpenCV (keyframe extraction every 2 seconds)
+- ffmpeg + openai-whisper (audio extraction + transcription, use "small" model)
+- pytesseract (OCR on keyframes)
+- Ollama + Llama 3.1 8B (local reasoning agent, orchestration LLM)
+- GPT-4o API + Gemini 1.5 Flash API (vision LLMs, use both, route based on content)
+- LangChain DuckDuckGo Search Tool (free, no API key needed)
+- FastAPI (REST API backend)
+- Pydantic (structured output schemas)
+- python-dotenv (env management)
+- asyncio (parallel processing of audio + frames + OCR)
+
+=== PROJECT STRUCTURE ===
+
+reelcontext/
+├── main.py                  # FastAPI app entry point
+├── .env.example             # API keys template
+├── requirements.txt
+├── config.py                # All settings via pydantic BaseSettings
+├── api/
+│   └── routes.py            # POST /analyze endpoint
+├── core/
+│   ├── input_handler.py     # Accepts URL or uploaded file, calls yt-dlp
+│   ├── media_processor.py   # OpenCV frames + ffmpeg audio + OCR
+│   ├── transcriber.py       # Whisper ASR
+│   ├── vision_router.py     # Routes to GPT-4o or Gemini based on content
+│   ├── agent.py             # LangChain agent with tools
+│   └── synthesizer.py       # Final structured output builder
+├── tools/
+│   └── web_search.py        # DuckDuckGo LangChain tool wrapper
+├── schemas/
+│   └── output.py            # Pydantic response schema
+└── utils/
+    └── file_manager.py      # Temp file creation and cleanup
+
+=== DETAILED REQUIREMENTS ===
+
+1. INPUT HANDLER (input_handler.py)
+   - Accept either a URL string or an uploaded file path
+   - If URL: use yt-dlp to download to /tmp/reelcontext/{uuid}/reel.mp4
+   - Support: YouTube Shorts, Instagram Reels, TikTok, Twitter/X, Facebook
+   - For Instagram: use cookiesfrombrowser chrome as fallback
+   - After processing always delete temp files (use try/finally)
+
+2. MEDIA PROCESSOR (media_processor.py)
+   - Run 3 tasks in parallel using asyncio.gather:
+     a) Extract keyframes every 2 seconds using OpenCV, save as JPEG
+     b) Strip audio using ffmpeg, save as .wav
+     c) Run OCR on every 5th frame using pytesseract
+   - Return: list of frame paths, audio path, ocr_text string
+
+3. TRANSCRIBER (transcriber.py)
+   - Load whisper "small" model
+   - Transcribe audio file
+   - Return transcript string + detected language
+
+4. VISION ROUTER (vision_router.py)
+   - Take list of keyframe paths (use max 5 frames, pick evenly spaced)
+   - Encode frames as base64
+   - Route logic:
+     * If frames contain mostly text/news → use Gemini 1.5 Flash
+     * Default → use GPT-4o vision
+     * If GPT-4o fails or quota exceeded → fallback to Gemini
+   - Return: scene_description string
+
+5. LANGCHAIN AGENT (agent.py)
+   - Use Ollama Llama 3.1 8B as the reasoning LLM
+   - Build agent with these tools:
+     * web_search_tool (DuckDuckGo)
+     * A custom "classify_content" tool that decides: movie_scene / 
+       news_event / sports_event / meme / music_video / unknown
+   - Agent input: transcript + scene_description + ocr_text
+   - Agent decides autonomously when to trigger web search
+   - Agent prompt system message:
+     "You are a video context expert. Given visual scene description, 
+      audio transcript, and on-screen text from a short video reel, 
+      identify the source (movie, TV show, news event, sports event etc.), 
+      explain what is happening, and provide full context. 
+      Use web search when you are not confident. 
+      Always return structured output."
+
+6. OUTPUT SYNTHESIZER (synthesizer.py)
+   - Takes agent output and formats into Pydantic schema:
+     {
+       content_type: str,        # movie_scene / news_event / sports / meme etc
+       title: str,               # movie name or event name
+       context_summary: str,     # 2-3 sentence explanation
+       scene_detail: str,        # what is happening in this specific clip
+       confidence: float,        # 0.0 to 1.0
+       sources: list[str],       # URLs from web search if used
+       language_detected: str
+     }
+
+7. API (routes.py)
+   - POST /analyze
+     * Accepts: multipart form with optional file + optional url field
+     * Returns: OutputSchema as JSON
+     * Async endpoint
+     * Request timeout: 120 seconds
+   - GET /health → {"status": "ok"}
+
+8. ERROR HANDLING
+   - All stages must have try/except with descriptive errors
+   - If vision LLM fails → still proceed with transcript + OCR only
+   - If web search fails → proceed without it, lower confidence score
+   - Log all errors with Python logging module
+
+9. ENV VARIABLES NEEDED (.env.example)
+   OPENAI_API_KEY=
+   GOOGLE_API_KEY=
+   OLLAMA_BASE_URL=http://localhost:11434
+
+10. REQUIREMENTS.TXT
+    Include all packages with pinned versions.
+
+=== WHAT NOT TO BUILD ===
+- No frontend/UI (API only)
+- No database
+- No authentication
+- No Docker (keep it simple)
+
+Build this step by step, starting with project structure, 
+then each module in order from input → output.
